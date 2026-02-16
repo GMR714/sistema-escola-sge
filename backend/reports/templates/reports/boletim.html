@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Boletim Escolar</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Prefeitura Municipal de Guiricema</h1>
+        <h2>Secretaria Municipal de Educação</h2>
+        <h3>Boletim Escolar - {{ matricula.turma.ano_letivo.ano }}</h3>
+    </div>
+
+    <div class="info">
+        <p><strong>Escola:</strong> {{ matricula.turma.ano_letivo.escola.nome }}</p>
+        <p><strong>Aluno:</strong> {{ aluno.pessoa.nome }} (Matrícula: {{ matricula.id }})</p>
+        <p><strong>Turma:</strong> {{ matricula.turma.nome }} - {{ matricula.turma.get_turno_display }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Avaliação</th>
+                <th>Data</th>
+                <th>Valor Máximo</th>
+                <th>Nota Obertida</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nota in notas %}
+            <tr>
+                <td>{{ nota.avaliacao.nome }}</td>
+                <td>{{ nota.avaliacao.data|date:"d/m/Y" }}</td>
+                <td>{{ nota.avaliacao.valor_maximo }}</td>
+                <td>{{ nota.valor|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center;">Nenhuma nota lançada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-top: 50px; text-align: center;">
+        <p>________________________________________________</p>
+        <p>Assinatura do Responsável</p>
+    </div>
+</body>
+
+</html>

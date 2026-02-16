@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: sge_db
+    environment:
+      POSTGRES_DB: sge_db
+      POSTGRES_USER: sge_user
+      POSTGRES_PASSWORD: sge_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - sge-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sge_user -d sge_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: sge_backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=sge_db
+      - DB_USER=sge_user
+      - DB_PASSWORD=sge_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DJANGO_SECRET_KEY=dev_secret_key
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sge-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: sge_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - sge-network
+
+volumes:
+  pgdata:
+
+networks:
+  sge-network:
+    driver: bridge

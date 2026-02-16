@@ -1,0 +1,8 @@
+Django>=5.0
+django-ninja>=1.0
+psycopg2-binary
+pydantic
+django-cors-headers
+weasyprint
+gunicorn
+python-dotenv
